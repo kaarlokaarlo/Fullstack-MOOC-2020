@@ -10,15 +10,18 @@ import Filter from './components/filter'
 const App = () =>{
 const [ country , setCountry ] = useState([])
 const [ condition , setCondition ] = useState('')
+//const [ weather , setWeather ] = useState([])
+
 
 const handleCondition = (event) =>{
    setCondition(event.target.value)
 }
 
 const handleClick = (event) =>{
-  console.log('nappia painettiin haha')
+  console.log('nappia painettiin ')
     setCondition(event.target.name)
   }
+
 
 
  useEffect(() => {

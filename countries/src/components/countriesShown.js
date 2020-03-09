@@ -1,15 +1,30 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import Filter from './filter'
+import axios from 'axios'
 
 
 
+const OneCountry = (props) => {
 
-const OneCountry = (props) =>{
-       const maa = props
-      // console.log("asdfghjk")
-       
-       console.log('onecountru')
-       
+  const maa = props
+  const [ weather , setWeather] = useState([])
+   
+  const api_key = process.env.REACT_APP_API_KEY
+
+  useEffect(() => {
+    const params = {
+      access_key: api_key,
+      query: maa.capital,
+      units: 'm'
+    }
+    axios
+      .get('http://api.weatherstack.com/current',{params})
+      .then(response => {
+        setWeather(response.data.current)
+       console.log((response.data.current.temperature))
+      })
+  }, [])
+       console.log(weather)
         return(
         <>
           <h1>{maa.name}</h1>
@@ -23,7 +38,14 @@ const OneCountry = (props) =>{
             )} 
           <img src={maa.flag} alt="flag"
              width= "100px" hspace="10"/>
+          <h2>Weather in {maa.capital}</h2>
+          <p><b>temperature:</b> {weather.temperature} Celcius</p>
+          <br/><img src={weather.weather_icons} alt={maa.capital} />
+          <p><b>wind:</b> {weather.wind_speed} km/h direction {weather.wind_dir}</p>
+
+
         </>
+
           )
 }
 
@@ -38,11 +60,9 @@ const CountriesShown = ({condition, countries, handleClick}) => {
             .includes(condition.toLowerCase()))
 
        if( maat.length == 1 ){
-                    console.log(maat)
                   const maa = maat[0]
                   return OneCountry(maa) 
        }else if ( maat.length <= 10 ){
-                  console.log('else ifi countriesshown')
                   return Filter({maat,handleClick})
        }else{
                   return 'Too many matches, specify another filter'
