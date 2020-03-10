@@ -15,6 +15,10 @@ const App = () => {
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
   const [ newCondition, setNewCondition ] = useState('')
+  const [ newMessage, setNewMessage ] = useState(null)
+  const [ newStyle, setNewStyle ] = useState(false)
+
+
 
   
   useEffect(() => {
@@ -25,7 +29,32 @@ const App = () => {
     })
   }, [])
 
- 
+
+ const Notification = ({ message, style }) =>{
+     const notificStyle = {
+     color: 'green' ,
+     fontSize: '20px',
+     background: 'lightgray' ,
+     borderStyle: 'solid' ,
+     padding: '10px' ,
+     borderRadius: '5px',
+     marginBottom: '10px'
+   }
+   console.log(style)
+   if(style){
+     console.log('ddddasssss')
+     notificStyle.color = 'red' 
+   }
+  
+   if (message === null) return null
+
+   return (
+     <div style = {notificStyle}>
+       <br />
+       <em>{message}</em>
+     </div>
+   )
+ }
 
   const addName = (event) =>{
       event.preventDefault()
@@ -33,24 +62,25 @@ const App = () => {
           name: newName,
           number: newNumber
         }
-     if (!(persons.map(a => a.name).includes(uusÄijjä.name))){
+     if (!(persons.map(a => a.name.toLowerCase()).includes(uusÄijjä.name.toLowerCase()))){
         personService
         .create(uusÄijjä)
         .then(response =>{
           setPersons(persons.concat(response.data))
+          setNewMessage(`Added ${uusÄijjä.name}`)
           setNewName('')
           setNewNumber('')
+          setTimeout(() => {
+            setNewMessage(null)
+            }, 5000)
+          
         })
 
     } else{ //window.alert(`${uusÄijjä.name} is already added to phonebook`)
         if(!(newNumber.isEmpty)){
           if(window.confirm(`${uusÄijjä.name} is already added to phonebook, replace the old number with a new one? `)){
-            const dude = persons.find(p => p.name === uusÄijjä.name)
+            const dude = persons.find(p => p.name.toLowerCase() === uusÄijjä.name.toLowerCase())
             const id = dude.id
-            console.log(dude)
-            
-            //const number = pers.number
-            //const number = persons.find(n => n.id === pers.id)
             const changedPerson = { ...dude, number: uusÄijjä.number }  
             console.log(changedPerson)
            
@@ -61,9 +91,17 @@ const App = () => {
                 setPersons(persons.map(pers => pers.id !== id ? 
                     pers : response.data
                     ))
-                
+                  setNewMessage(`Updated ${dude.name}'s number`)
                   setNewName('')
                   setNewNumber('')
+                  setTimeout(() => {setNewMessage(null)}, 5000)
+              })
+              .catch(error =>{
+                setNewMessage(`Information of ${dude.name} has already been removed from server`,1)
+                setNewStyle(true)
+                setTimeout(() => {
+                  setNewMessage(null)
+                  setNewStyle(false)}, 5000)
               })
         }
       }
@@ -93,17 +131,20 @@ const handleClick =(event) =>{
   
   if(window.confirm('Delete ' + event.target.name + '?')){
     const deletedPerson = event.target
-    //console.log(deletedPerson.id)
-    //console.log(persons.map(person=>person.id))
-    //console.log(persons.filter(person => (person.id !== deletedPerson.id)))    
-    personService
+     personService
     .deletePerson(event.target.id)
     .then(response =>{
-      //console.log(deletedPerson)
       const ta = persons.filter(person => person.id != deletedPerson.id)
-     // console.log(ta)
-     // console.log(persons.filter(person => (person.id != deletedPerson.id)))    
       setPersons(ta)
+      setNewMessage(`Deleted ${deletedPerson.name}`)
+      setTimeout(() => {setNewMessage(null)}, 5000)
+    })
+    .catch(error =>{
+      setNewMessage(`Information of ${deletedPerson.name} has already been removed from server`)
+      setNewStyle(true)
+      setTimeout(() => {
+         setNewMessage(null)
+         setNewStyle(false)}, 5000)
     })
 }
 }
@@ -115,6 +156,8 @@ const handleClick =(event) =>{
     <div>
       <h2>Phonebook</h2>
       
+      <Notification message = {newMessage} style={newStyle} />
+
       <Filtter add = {addCondition} handle = {handleFilter} newC = {newCondition}/>
       <h2>Add a new</h2>
       <PersonForm 
