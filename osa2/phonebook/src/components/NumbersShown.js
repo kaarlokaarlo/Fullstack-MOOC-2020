@@ -10,7 +10,7 @@ const NumbersShown = ({pers,newC, handleClick}) =>{
     return(
          numbs.map(a =>
           <div key={a.name}>
-            <p>{a.name} kkk{a.number}
+            <p>{a.name} {a.number}
                 <Button name={a.name} id={a.id} handleClick={handleClick}/>
             </p>
           </div>
