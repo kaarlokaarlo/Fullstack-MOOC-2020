@@ -1,14 +1,14 @@
-//console.log('this is water')
-
 const express = require('express')
 const morgan = require('morgan')
+const cors = require('cors')
 const app = express()
+
 app.use(express.json()) 
+app.use(cors())
 
 
-const logger = 'tiny'//':method :url :status :res[content-length] - :response-time ms '
+const logger = 'tiny' 
 app.use(morgan(logger))
-
 
 
 let persons = [
@@ -57,7 +57,6 @@ app.get('/api/persons/:id', (req,res) => {
 
 app.delete('/api/persons/:id', (req, res) => {
     const id = Number(req.params.id)
-    console.log('dele')
     persons = persons.filter(person => person.id !== id)
     res.status(204).end()
 })
@@ -85,10 +84,11 @@ app.post('/api/persons', (req, res) =>{
     person.id = iide
 
     res.json(person)   
+    console.log(JSON.stringify(person))
     
 })
 
-const port = 3001
+const port = process.env || 3001
 app.listen(port, () => {
     console.log(`Server running on port ${port}`)
 })
