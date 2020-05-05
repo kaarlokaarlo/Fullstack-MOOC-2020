@@ -40,9 +40,9 @@ const App = () => {
      borderRadius: '5px',
      marginBottom: '10px'
    }
-   console.log(style)
+  
    if(style){
-     console.log('ddddasssss')
+     
      notificStyle.color = 'red' 
    }
   
@@ -82,12 +82,12 @@ const App = () => {
             const dude = persons.find(p => p.name.toLowerCase() === uusÄijjä.name.toLowerCase())
             const id = dude.id
             const changedPerson = { ...dude, number: uusÄijjä.number }  
-            console.log(changedPerson)
+          
            
             personService
               .update(id, changedPerson)
               .then(response => {
-                console.log(response.data)
+                
                 setPersons(persons.map(pers => pers.id !== id ? 
                     pers : response.data
                     ))
@@ -114,7 +114,7 @@ const App = () => {
   const handleName = (event) =>{setNewName(event.target.value)}
 
   const handleNumber = (event) =>{
-   //console.log(event.target.value)
+   
    setNewNumber(event.target.value)
 }
 
