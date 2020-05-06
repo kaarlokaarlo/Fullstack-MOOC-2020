@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const baseUrl = '/api/persons' //'http://localhost:3001/api/persons/'
+const baseUrl = 'https://rocky-bastion-24255.herokuapp.com/api/persons/'//'http://localhost:3001/api/persons/'
 
 const getAll = () =>{
     return axios.get(baseUrl)//.then(response=>response.data)
@@ -10,10 +10,9 @@ const create = newPerson => {
     return axios.post(baseUrl,newPerson)//.then(response=>response.data)
 }
 
-const deletePerson = id =>{
-    const urli = baseUrl + id
-    const ta = axios.delete(urli).then(response=>response.data)
-    return ta
+const deletePerson = (id) =>{
+return axios.delete(`${baseUrl}${id}`)//then(response=>response.data)
+
 }
 
 const update = (id,newNumber) =>{

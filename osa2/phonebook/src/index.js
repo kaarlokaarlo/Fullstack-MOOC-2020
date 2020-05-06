@@ -5,7 +5,7 @@ import PersonForm from './components/PersonForm'
 import NumbersShown from './components/NumbersShown'
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
-import personService from './services/persons'
+import personService from './services/persons.js'
 
 
 
@@ -131,10 +131,11 @@ const handleClick =(event) =>{
   
   if(window.confirm('Delete ' + event.target.name + '?')){
     const deletedPerson = event.target
+    console.log(event.target.id)
      personService
     .deletePerson(event.target.id)
     .then(response =>{
-      const ta = persons.filter(person => person.id != deletedPerson.id)
+      const ta = persons.filter(person => person.id !== deletedPerson.id)
       setPersons(ta)
       setNewMessage(`Deleted ${deletedPerson.name}`)
       setTimeout(() => {setNewMessage(null)}, 5000)
