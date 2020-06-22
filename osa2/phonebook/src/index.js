@@ -75,6 +75,16 @@ const App = () => {
             }, 5000)
           
         })
+        .catch(error => {
+            console.log(error.response.data.error)
+            setNewMessage(error.response.data.error)
+            setNewStyle(true)
+            setTimeout(() =>{
+              setNewMessage(null)
+              setNewStyle(false)
+               }, 5000)
+          
+        })
 
     } else{ //window.alert(`${uusÄijjä.name} is already added to phonebook`)
         if(!(newNumber.isEmpty)){
@@ -101,7 +111,8 @@ const App = () => {
                 setNewStyle(true)
                 setTimeout(() => {
                   setNewMessage(null)
-                  setNewStyle(false)}, 5000)
+                  setNewStyle(false)}, 
+                  5000)
               })
         }
       }
