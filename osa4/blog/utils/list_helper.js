@@ -1,6 +1,5 @@
 const _ = require("lodash");
 
-//////////////////////////////// 4.7 next
 
 const dummy = (blogs) => { return 1 }
   
