@@ -7,6 +7,8 @@ const api = supertest(app)
 
 const User = require('../models/user')
 const Blog = require('../models/blog')
+const { notify } = require('../controllers/blogs')
+const { init } = require('../app')
 
 
 const initialBlogs = [
@@ -30,7 +32,10 @@ const initialBlogs = [
     }
 ]
 
-beforeEach(async () => {
+
+describe("When there is some blogs", () => {
+
+  beforeEach(async () => {
     await Blog.deleteMany({})
     console.log('cleared')
     await Blog.insertMany(initialBlogs)
@@ -50,8 +55,25 @@ test('There are three blogs', async() => {
     const response = await api.get('/api/blogs')
     expect(response.body).toHaveLength(3)
 })
+})
+
+
+describe('Adding blogs', () => {
+
+beforeEach(async () => {
+    await User.deleteMany({})
+
+    const passwordHash = await bcrypt.hash('sekret', 10)
+    const user = new User({username: 'Juuri', passwordHash})
+
+    await user.save()
+  })
 
 test('Blogs can be added', async() => {
+
+
+
+
     const newBlog = {
             title: "Mysliaamu",
             author: "Jukka Palmu",
@@ -66,11 +88,14 @@ test('Blogs can be added', async() => {
         .expect(200)
         .expect('Content-Type', /application\/json/)
 
-    const response = await api.get('/api/blogs')
-    const blogs = response.body.map(t => t.title)
-
-    expect(response.body).toHaveLength(initialBlogs.length+1)
-    expect(blogs).toContain('Mysliaamu')
+    //const response = await api.get('/api/blogs')
+    //const blogs = response.body.map(t => t.title)
+    const blogsAtEnd = await helper.blogsInDb()
+    const contents = blogsAtEnd.map(b => b.title)
+   // expect(response.body).toHaveLength(initialBlogs.length+1)
+    expect(blogsAtEnd.length).toBe(initialBlogs.length + 1)
+    //expect(blogs).toContain('Mysliaamu')
+    expect(contents).toContain('Mysliaamu')
 })
 
 test('If likes is undefined, it is updated to 0', async() => {
@@ -82,13 +107,15 @@ test('If likes is undefined, it is updated to 0', async() => {
     }
 
     await api
-        .post('/api/blogs/')
+        .post('/api/blogs')
         .send(newBlog)
         .expect(200)
+        .expect('Content-Type', /application\/json/)
 
-    const response = await Blog.find({})//await api.get('/api/blogs')
-    const newestBlog = response.reverse()[0]
-    //console.log(response)
+    //const response = await Blog.find({})//await api.get('/api/blogs')
+    const blogsAtEnd = await helper.blogsInDb()
+    const newestBlog = blogsAtEnd.reverse()[0]
+    console.log(newestBlog.likes)
 
    // console.log(response.reverse()[0])
     //console.log(newestBlog)
@@ -111,6 +138,7 @@ test('Blog has title and url', async() => {
         //console.log(response)
         
 
+})
 })
 
 
@@ -171,6 +199,62 @@ describe('when there is initially one user at db', () => {
 
   })
 
+
+describe('when adding new users', () => {
+    beforeEach(async () => {
+      await User.deleteMany({})
+  
+      const passwordHash = await bcrypt.hash('sekret', 10)
+      const user = new User({username: 'root', passwordHash})
+  
+      await user.save()
+    })
+    
+test('creation fails with a too short username', async () => {
+      const usersAtStart = await helper.usersInDb()
+  
+      const newUser = {
+        username: 'ml',
+        name: 'Matti Luukkainen',
+        password: 'salainen',
+        }
+        //console.log('taa toimii')
+      await api
+        .post('/api/users')
+        .send(newUser)
+        .expect(400)
+        //.expect('Content-Type', /application\/json/)
+  
+      const usersAtEnd = await helper.usersInDb()
+      expect(usersAtEnd.length).toBe(usersAtStart.length)
+  
+      const usernames = usersAtEnd.map(u => u.username)
+      expect(usernames).not.toContain(newUser.username)
+    })
+
+    test('creation fails with a too short password', async () => {
+      const usersAtStart = await helper.usersInDb()
+  
+      const newUser = {
+        username: 'matti',
+        name: 'Matti Luukkainen',
+        password: 'sa',
+        }
+        //console.log('taa toimii')
+      await api
+        .post('/api/users')
+        .send(newUser)
+        .expect(400)
+        //.expect('Content-Type', /application\/json/)
+  
+      const usersAtEnd = await helper.usersInDb()
+      expect(usersAtEnd.length).toBe(usersAtStart.length)
+  
+      const usernames = usersAtEnd.map(u => u.username)
+      expect(usernames).not.toContain(newUser.username)
+    })
+    
+  })
 
 afterAll(() => {
     mongoose.connection.close()
