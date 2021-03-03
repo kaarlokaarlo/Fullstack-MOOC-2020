@@ -74,6 +74,21 @@ const App = () => {
       })
   }
 
+  const remove = (id) => {
+    const blog = blogs.find(b => b.id === id)
+
+    blogService
+      .remove(id)
+      .catch(() => {
+        setErrorMessage(`Blog ${blog} not found on the server`)
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
+      })
+  }
+
+
+
 
   const addBlog = (blog) => {
 
@@ -127,6 +142,7 @@ const App = () => {
           <div>
             username
             <input
+              id="username"
               type="text"
               value={username}
               name="Username"
@@ -136,13 +152,14 @@ const App = () => {
           <div>
             password
             <input
+              id="password"
               type="password"
               value={password}
               name="Password"
               onChange={({ target }) => setPassword(target.value)}
             />
           </div>
-          <button type="submit">login</button>
+          <button id="login-button" type="submit">login</button>
         </form>
       </div>
     )
@@ -161,7 +178,9 @@ const App = () => {
     return (
       <div>
         <div style={hideWhenVisible}>
-          <button onClick={() => setBlogFormVisible(true)}>Create new blog</button>
+          <button id="create-button" onClick={() => setBlogFormVisible(true)}>Create new blog</button>
+          <br/>
+          <br/>
         </div>
         <div style = {showWhenVisible}>
           <BlogForm
@@ -175,6 +194,7 @@ const App = () => {
   }
 
 
+  blogs.sort((a,b) => b.likes - a.likes)
 
   return (
     <div>
@@ -194,6 +214,7 @@ const App = () => {
               key={blog.id}
               blog={blog}
               like={() => like(blog.id)}
+              remove={() => remove(blog.id)}
             />
           )}
 

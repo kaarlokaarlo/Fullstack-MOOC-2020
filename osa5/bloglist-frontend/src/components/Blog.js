@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-const Blog = ({ blog, like }) => {
+const Blog = ({ blog, like, remove }) => {
 
   const [fullInfo, setFullInfo] = useState(false)
 
@@ -22,9 +22,10 @@ const Blog = ({ blog, like }) => {
       <br/>
       {blog.url}
       <br/>
-      Likes: {blog.likes} <button onClick={like}>Like</button>
+      Likes: {blog.likes} <button id="like-button" onClick={like}>Like</button>
       <br/>
       {blog.author}
+      <button id="remove-button" onClick={remove} >remove</button>
     </div>
 
   )
@@ -34,7 +35,7 @@ const Blog = ({ blog, like }) => {
     <div style = { blogStyle } >
       <div style = {hideWhenVisible} className='blog'>
         {blog.title} -<b>{blog.author}</b>
-        <button onClick={() => setFullInfo(true)}>view</button>
+        <button id="view-button" onClick={() => setFullInfo(true)}>view</button>
       </div>
       {fullInfo ? extended : null}
     </div>
