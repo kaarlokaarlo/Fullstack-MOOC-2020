@@ -25,7 +25,9 @@
     "build": "react-scripts build",
     "dev": "cross-env NODE_ENV=development nodemon index.js",
     "eject": "react-scripts eject",
-    "test": "cross-env NODE_ENV=test jest --verbose"
+    "test": "cross-env NODE_ENV=test jest --verbose",
+    "start:test": "cross-env NODE_ENV=test node index.js"
+
   },
   "eslintConfig": {
     "extends": "react-app"

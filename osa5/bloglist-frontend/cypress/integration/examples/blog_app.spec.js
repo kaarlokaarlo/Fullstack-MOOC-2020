@@ -123,14 +123,13 @@ describe('Blog app', function() {
       cy.wait(900)
       cy.get('#view-button').click()
       cy.wait(900)
-      
+
       cy.get('button').last().click()
-      
+
       cy.contains("Likes: 3")
       cy.contains("Likes: 1")
       cy.contains("Likes: 0")
 
-      
 
 
 
